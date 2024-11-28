@@ -1,0 +1,31 @@
+apiVersion: ray.io/v1alpha1
+kind: RayCluster
+metadata:
+  name: raycluster
+  namespace: ray
+spec:
+  headGroupSpec:
+    replicas: 1
+    rayStartParams:
+      include-dashboard: "true"
+    serviceType: ClusterIP  # You can change this to LoadBalancer or NodePort if needed
+    template:
+      spec:
+        containers:
+        - name: ray-head
+          image: rayproject/ray:2.0.0
+          ports:
+          - containerPort: 6379
+          - containerPort: 8265
+          - containerPort: 10001
+  workerGroupSpecs:
+  - groupName: worker-group-1  # Provide a name for the worker group
+    replicas: 2
+    maxReplicas: 4  # Set the maximum number of replicas
+    minReplicas: 1  # Set the minimum number of replicas
+    rayStartParams: {}
+    template:
+      spec:
+        containers:
+        - name: ray-worker
+          image: rayproject/ray:2.0.0

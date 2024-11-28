@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: streamlit-service
+  namespace: ray
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: streamlit-service
+  template:
+    metadata:
+      labels:
+        app: streamlit-service
+    spec:
+      containers:
+        - name: streamlit-container
+          image: streamlit-service:latest
+          env:
+            - name: API_URL
+              value: http://ray-cluster-head-svc:8000
+          ports:
+            - containerPort: 8501
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: streamlit-service
+  namespace: ray
+spec:
+  selector:
+    app: streamlit-service
+  ports:
+    - protocol: TCP
+      port: 8501
+      targetPort: 8501
+  type: NodePort

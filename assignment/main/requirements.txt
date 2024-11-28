@@ -1,0 +1,4 @@
+transformers 
+ray[serve] 
+fastapi 
+torch
